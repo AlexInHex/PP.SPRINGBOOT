@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Add User</title>
+</head>
+<body>
+<h2>Add User</h2>
+
+<form th:action="@{/users/add}" method="post" th:object="${user}">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" th:field="*{name}" required>
+
+    <label for="surname">Surname:</label>
+    <input type="text" id="surname" name="surname" th:field="*{surname}" required>
+
+    <input type="submit" value="Save">
+</form>
+
+<a th:href="@{/users}">Back to User List</a>
+
+</body>
+</html>
