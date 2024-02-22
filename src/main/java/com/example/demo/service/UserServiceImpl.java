@@ -1,6 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dao.UserDao;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,41 +10,43 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserDao userDAO) {
-        this.userDao = userDAO;
+    public UserServiceImpl(UserRepository userDAO) {
+        this.userRepository = userDAO;
     }
 
     @Override
     public List<User> getAllUsers() {
-        return userDao.findAll();
+        return userRepository.findAll();
     }
 
     @Override
     public User getUserById(Long id) {
-        return userDao.findById(id).orElse(null);
+        return userRepository.findById(id).
+                orElseThrow(() -> new RuntimeException("ID не найден: " + id));
+
     }
 
     @Override
     public void addUser(User user) {
-        userDao.save(user);
+        userRepository.save(user);
     }
 
     @Override
     public void updateUser(Long id, User updatedUser) {
         User existingUser = getUserById(id);
 
-        if (existingUser != null) {
-            existingUser.setName(updatedUser.getName());
-            existingUser.setSurname(updatedUser.getSurname());
-            userDao.save(existingUser);
-        }
+        existingUser.setName(updatedUser.getName());
+        existingUser.setSurname(updatedUser.getSurname()); // обновляется
+        userRepository.save(existingUser);
+
     }
 
     @Override
     public void deleteUser(Long id) {
-        userDao.deleteById(id);
+        User existingUser = getUserById(id);
+        userRepository.deleteById(existingUser.getId());
     }
 }
